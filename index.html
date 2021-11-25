@@ -9,11 +9,22 @@
 <body>
 
 <div class="container">
-  <button id="start" type="button">Start</button>
+  <label for="difficulty">Уровень сложности:</label>
+  <select id="difficulty">
+    <option value="1">Легкий</option>
+    <option value="2">Средний</option>
+    <option value="3">Сложный</option>
+    <option value="4">Мастер</option>
+    <option value="5">Невозможно</option>
+  </select>
+
   <br>
+  <button id="start" type="button">Start</button>
   <button hidden id="next" type="button">Next</button>
   <br>
-  <span id="lives"></span>
+  <span id="lives">Жизни:</span>
+  <br>
+  <span id="points">Баллы:</span>
   <div class="current-level"></div>
   <div class="field"></div>
 </div>
