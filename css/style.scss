@@ -1,0 +1,48 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.container {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.current-level {
+  width: 300px;
+  margin: 0 auto;
+  text-align: center;
+  padding-bottom: 10px;
+}
+
+.field {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto;
+  width: 300px;
+  height: 300px;
+  border: 2px solid black;
+}
+
+.red {
+  background: #ff6450;
+}
+
+.green {
+  background: #85ff4f;
+}
+
+.white {
+  background: white;
+}
+
+.blue {
+  background: #008aff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
