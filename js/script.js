@@ -1,18 +1,3 @@
-const field = document.querySelector('.field')
-const start = document.querySelector('#start')
-const next = document.querySelector('#next')
-const container = document.querySelector('.container')
-const livesSpan = document.querySelector('#lives')
-const levelDiv = document.querySelector('.current-level')
-const pointsSpan = document.querySelector('#points')
-const difficulty = document.querySelector('#difficulty')
-
-let currentLevel = 0
-let lives = 3
-let points = 0
-let levelPoints = 0
-let gameIsPaused = true
-
 const level1 = [
   [0, 0, 0, 0, 0, 0, 2],
   [0, 0, 0, 0, 1, 1, 1],
@@ -28,31 +13,71 @@ const level2 = [
   [0, 0, 0, 0, 1, 0, 0, 0, 0],
   [0, 0, 0, 0, 1, 0, 0, 0, 0],
   [0, 0, 0, 0, 1, 0, 0, 0, 0],
-  [0, 0, 0, 0, 1, 0, 0, 0, 0],
-  [0, 0, 0, 0, 1, 0, 0, 0, 0],
-  [0, 0, 0, 0, 1, 0, 0, 0, 0],
-  [0, 0, 0, 0, 3, 0, 0, 0, 0],
+  [0, 0, 0, 0, 1, 1, 1, 1, 0],
+  [0, 0, 0, 0, 0, 0, 0, 1, 0],
+  [0, 0, 0, 0, 0, 0, 0, 1, 0],
+  [0, 0, 0, 0, 0, 0, 0, 3, 0],
 ]
 
 const level3 = [
-  [2, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0],
-  [0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0],
-  [0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0],
-  [0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0],
-  [0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0],
-  [0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0],
-  [0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0],
-  [0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0],
-  [0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0],
-  [0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0],
-  [0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0],
-  [0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0],
+  [2, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1],
+  [0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 1],
+  [0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 1],
+  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1],
+  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0],
+  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0],
+  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0],
+  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0],
+  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0],
+  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0],
+  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0],
+]
+
+const level4 = [
+  [0, 0, 0, 1, 1, 1, 0, 0, 0],
+  [0, 0, 1, 1, 0, 1, 0, 0, 0],
+  [2, 1, 1, 0, 0, 1, 0, 0, 0],
+  [0, 0, 0, 0, 0, 1, 0, 0, 0],
+  [0, 1, 1, 1, 0, 1, 1, 1, 0],
+  [0, 1, 0, 1, 0, 0, 0, 1, 0],
+  [0, 1, 0, 1, 1, 1, 1, 1, 0],
+  [0, 1, 0, 0, 0, 0, 0, 0, 0],
+  [0, 1, 1, 1, 1, 1, 1, 1, 3],
 ]
 
 const levels = {
   0: level1,
   1: level2,
   2: level3,
+  3: level4,
+}
+
+
+const field = document.querySelector('.field')
+const start = document.querySelector('#start')
+const next = document.querySelector('#next')
+const container = document.querySelector('.container')
+const livesSpan = document.querySelector('#lives')
+const pointsSpan = document.querySelector('#points')
+const bestSpan = document.querySelector('#best')
+const levelDiv = document.querySelector('.current-level')
+const difficulty = document.querySelector('#difficulty')
+
+
+let points = 0
+let bestPoints = 0
+let levelPoints = 0
+let currentLevel = 0
+let lives = 3
+let gameIsPaused = true
+
+
+const addToScores = () => {
+  if (points > bestPoints) {
+    bestPoints = points
+    bestSpan.textContent = `Лучший результат: ${bestPoints}`
+  }
 }
 
 const clearField = () => {
@@ -65,12 +90,16 @@ const gameOver = () => {
   points -= levelPoints + 2
   levelPoints = 0
   lives--
+
   if (lives <= 0) {
+    addToScores()
+    difficulty.disabled = false
     currentLevel = 0
     lives = 3
     points = 0
     alert('Игра окончена!')
   }
+
   livesSpan.textContent = `Жизни: ${lives}`
   pointsSpan.textContent = `Баллы: ${points}`
   clearField()
@@ -87,6 +116,7 @@ const startGame = () => {
   gameIsPaused = false
   if (!currentLevel) {
     livesSpan.textContent = `Жизни: ${lives}`
+    difficulty.disabled = true
   }
   Array.from(field.children).forEach(it => {
     it.classList.remove('green')
@@ -150,6 +180,8 @@ const fill = () => {
 
   if (!levels[currentLevel]) {
     alert('Игра пройдена!')
+    addToScores()
+    difficulty.disabled = false
     currentLevel = 0
     lives = 3
     points = 0
@@ -212,10 +244,7 @@ difficulty.addEventListener('change', () => {
     squares.forEach(it => it.classList.add('square-border'))
     field.classList.add('hard')
   } else if (difficulty.value === '4') {
-    squares.forEach(it => {
-      it.classList.remove('square-border')
-      // it.removeEventListener('mouseover', addVeryHard )
-    })
+    squares.forEach(it => it.classList.remove('square-border'))
     field.classList.add('hard')
   } else if (difficulty.value === '5') {
     squares.forEach(it => it.classList.remove('square-border'))
