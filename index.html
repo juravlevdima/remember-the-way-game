@@ -3,8 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <meta name="description" content="Remember The Way Game"/>
   <link rel="stylesheet" href="css/style.css">
-  <title>Title</title>
+  <title>Remember The Way</title>
 </head>
 <body>
 
@@ -19,8 +20,9 @@
   </select>
 
   <br>
-  <button id="start" type="button">Start</button>
-  <button hidden id="next" type="button">Next</button>
+  <button id="start" type="button">Старт</button>
+  <button hidden id="next" type="button">Следующий</button>
+  <button disabled id="reset" type="button">Начать заново</button>
   <br>
   <span id="lives">Жизни:</span>
   <br>
@@ -31,6 +33,7 @@
   <div class="field"></div>
 </div>
 
-<script src=js/script.js></script>
+<script type="module" src=js/levels.js></script>
+<script type="module" src=js/script.js></script>
 </body>
 </html>

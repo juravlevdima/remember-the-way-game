@@ -1,61 +1,8 @@
-const level1 = [
-  [0, 0, 0, 0, 0, 0, 2],
-  [0, 0, 0, 0, 1, 1, 1],
-  [0, 0, 0, 0, 1, 0, 0],
-  [0, 0, 0, 0, 1, 0, 0],
-  [0, 0, 0, 0, 1, 0, 0],
-  [0, 0, 0, 0, 1, 0, 0],
-  [0, 0, 0, 0, 3, 0, 0],
-]
-const level2 = [
-  [2, 1, 1, 1, 1, 0, 0, 0, 0],
-  [0, 0, 0, 0, 1, 0, 0, 0, 0],
-  [0, 0, 0, 0, 1, 0, 0, 0, 0],
-  [0, 0, 0, 0, 1, 0, 0, 0, 0],
-  [0, 0, 0, 0, 1, 0, 0, 0, 0],
-  [0, 0, 0, 0, 1, 1, 1, 1, 0],
-  [0, 0, 0, 0, 0, 0, 0, 1, 0],
-  [0, 0, 0, 0, 0, 0, 0, 1, 0],
-  [0, 0, 0, 0, 0, 0, 0, 3, 0],
-]
-
-const level3 = [
-  [2, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1],
-  [0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 1],
-  [0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 1],
-  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1],
-  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0],
-  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0],
-  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0],
-  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0],
-  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0],
-  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0],
-  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0],
-]
-
-const level4 = [
-  [0, 0, 0, 1, 1, 1, 0, 0, 0],
-  [0, 0, 1, 1, 0, 1, 0, 0, 0],
-  [2, 1, 1, 0, 0, 1, 0, 0, 0],
-  [0, 0, 0, 0, 0, 1, 0, 0, 0],
-  [0, 1, 1, 1, 0, 1, 1, 1, 0],
-  [0, 1, 0, 1, 0, 0, 0, 1, 0],
-  [0, 1, 0, 1, 1, 1, 1, 1, 0],
-  [0, 1, 0, 0, 0, 0, 0, 0, 0],
-  [0, 1, 1, 1, 1, 1, 1, 1, 3],
-]
-
-const levels = {
-  0: level1,
-  1: level2,
-  2: level3,
-  3: level4,
-}
-
+import levels from './levels.js'
 
 const field = document.querySelector('.field')
 const start = document.querySelector('#start')
+const reset = document.querySelector('#reset')
 const next = document.querySelector('#next')
 const container = document.querySelector('.container')
 const livesSpan = document.querySelector('#lives')
@@ -84,7 +31,7 @@ const clearField = () => {
   field.innerHTML = ''
 }
 
-const gameOver = () => {
+const setGameOver = () => {
   if (gameIsPaused) return;
 
   points -= levelPoints + 2
@@ -108,6 +55,8 @@ const gameOver = () => {
 }
 
 const startGame = () => {
+  reset.disabled = false
+
   if (difficulty.value === '5') {
     Array.from(document.querySelectorAll('.square'))
       .forEach(it => it.classList.add('very-hard'))
@@ -133,7 +82,7 @@ const levelWin = (e) => {
   field.innerHTML = `<div>Уровень ${currentLevel + 1} пройден!</div>`
   next.hidden = false
   start.hidden = true
-  container.removeEventListener('mouseover', gameOver)
+  container.removeEventListener('mouseover', setGameOver)
   currentLevel++
   levelPoints = 0
   gameIsPaused = true
@@ -141,7 +90,7 @@ const levelWin = (e) => {
 
 const setRed = (div) => {
   div.classList.add('red')
-  div.addEventListener('mouseover', gameOver)
+  div.addEventListener('mouseover', setGameOver)
 }
 
 const setGreen = (div) => {
@@ -165,7 +114,7 @@ const setStart = (div) => {
   div.textContent = 'S'
   div.addEventListener('mouseover', (e) => {
     e.stopPropagation()
-    container.addEventListener('mouseover', gameOver, {once: true})
+    container.addEventListener('mouseover', setGameOver, {once: true})
   })
 }
 
@@ -230,6 +179,19 @@ next.addEventListener('click', () => {
   fill()
   start.hidden = false
   next.hidden = true
+})
+
+reset.addEventListener('click', () => {
+  reset.disabled = true
+  difficulty.disabled = false
+  currentLevel = 0
+  lives = 3
+  points = 0
+  livesSpan.textContent = `Жизни: ${lives}`
+  pointsSpan.textContent = `Баллы: ${points}`
+  clearField()
+  fill()
+  gameIsPaused = true
 })
 
 difficulty.addEventListener('change', () => {
