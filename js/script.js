@@ -8,12 +8,13 @@ const container = document.querySelector('.container')
 const livesSpan = document.querySelector('#lives')
 const pointsSpan = document.querySelector('#points')
 const bestSpan = document.querySelector('#best')
+const bestReset = document.querySelector('#best-reset')
 const levelDiv = document.querySelector('.current-level')
 const difficulty = document.querySelector('#difficulty')
 
 
 let points = 0
-let bestPoints = 0
+let bestPoints = +localStorage.getItem('best_scores') || 0
 let levelPoints = 0
 let currentLevel = 0
 let lives = 3
@@ -24,12 +25,16 @@ const addToScores = () => {
   if (points > bestPoints) {
     bestPoints = points
     bestSpan.textContent = `Лучший результат: ${bestPoints}`
+    localStorage.setItem('best_scores', String(bestPoints))
+    bestReset.removeAttribute('hidden')
   }
 }
+
 
 const clearField = () => {
   field.innerHTML = ''
 }
+
 
 const setGameOver = () => {
   if (gameIsPaused) return;
@@ -54,6 +59,7 @@ const setGameOver = () => {
   gameIsPaused = true
 }
 
+
 const startGame = () => {
   reset.disabled = false
 
@@ -63,18 +69,22 @@ const startGame = () => {
   }
 
   gameIsPaused = false
+
   if (!currentLevel) {
     livesSpan.textContent = `Жизни: ${lives}`
     difficulty.disabled = true
   }
+
   Array.from(field.children).forEach(it => {
     it.classList.remove('green')
     it.classList.remove('red')
   })
+
   document.querySelector('.start').addEventListener('mouseover', () => {
     document.querySelector('.finish').addEventListener('mouseover', levelWin)
   })
 }
+
 
 const levelWin = (e) => {
   e.stopPropagation()
@@ -88,17 +98,21 @@ const levelWin = (e) => {
   gameIsPaused = true
 }
 
+
 const setRed = (div) => {
   div.classList.add('red')
   div.addEventListener('mouseover', setGameOver)
 }
 
+
 const setGreen = (div) => {
   div.classList.add('green')
+
   div.addEventListener('mouseover', (e) => {
     e.stopPropagation()
     div.classList.add('green')
   })
+
   div.addEventListener('mouseover', function addPoints() {
     if (!gameIsPaused) {
       points += +difficulty.value
@@ -109,19 +123,24 @@ const setGreen = (div) => {
   })
 }
 
+
 const setStart = (div) => {
   div.classList.add('blue', 'start')
+
   div.textContent = 'S'
+
   div.addEventListener('mouseover', (e) => {
     e.stopPropagation()
     container.addEventListener('mouseover', setGameOver, {once: true})
   })
 }
 
+
 const setFinish = (div) => {
   div.classList.add('blue', 'finish')
   div.textContent = 'F'
 }
+
 
 const fill = () => {
   levelDiv.textContent = `Текущий уровень: ${currentLevel + 1}`
@@ -171,6 +190,7 @@ const fill = () => {
   })
 }
 
+
 fill()
 
 start.addEventListener('click', startGame)
@@ -194,6 +214,15 @@ reset.addEventListener('click', () => {
   gameIsPaused = true
 })
 
+bestReset.addEventListener('click', () => {
+  if ( confirm('Вы действительно хотите удалить лучший результат?') ) {
+    localStorage.removeItem('best_scores')
+    bestPoints = 0
+    bestSpan.textContent = `Лучший результат: 0`
+    bestReset.hidden = true
+  }
+})
+
 difficulty.addEventListener('change', () => {
   const squares = Array.from(document.querySelectorAll('.square'))
   if (difficulty.value === '1') {
@@ -213,3 +242,8 @@ difficulty.addEventListener('change', () => {
     field.classList.add('hard')
   }
 })
+
+if (bestPoints > 0) {
+  bestSpan.textContent = `Лучший результат: ${bestPoints}`
+  bestReset.removeAttribute('hidden')
+}
